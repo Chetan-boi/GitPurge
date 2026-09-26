@@ -1,2 +1,1 @@
-# GItPurge
-# GItPurge
+# GitPurge

@@ -1,2 +1,10 @@
+import json 
+
 def main() -> None:
-    print("Hello from gitpurge!")
+    file = open("test/sample.json",'r')
+    data = json.load(file)
+
+    print(data)
+
+if __name__ == "__main__":
+    main()
