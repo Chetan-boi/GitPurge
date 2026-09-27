@@ -36,11 +36,35 @@ RULES = (
         "error", # Severity
         re.compile(r"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----"), # Pattern
     ),
+    (
+        "jwt-secret", # Rule ID
+        "JWT secret detected.", # Message
+        "error", # Severity
+        re.compile(r"\bJWT_SECRET\b\s*[:=]\s*[\'\"]?([A-Za-z0-9_./+=-]{16,})"), # Pattern
+    ),
+    (
+        "generic-secret", # Rule ID
+        "Generic secret detected.", # Message
+        "warning", # Severity
+        re.compile(r"\b(?:API_KEY|SECRET|TOKEN)\b\s*[:=]\s*[\'\"]?([A-Za-z0-9_./+=-]{16,})"), # Pattern
+    ),
+    (
+        "mongoose-url", # Rule ID
+        "MongoDB URI detected.", # Message
+        "error", # Severity
+        re.compile(
+            r"\bmongodb(?:\+srv)?://[^:/\s@]+:[^@/\s]+@[^/\s?#]+"
+            r"(?:/[^\s?#]*)?(?:\?[^\s#]*)?"
+        ), # Pattern
+    )
 )
 
 ASSIGNMENT = re.compile(
     r'(?im)\b(?:api[_-]?(?:key|token)|secret|token|password|passwd)\b'
     r'\s*[:=]\s*[\'"]?([A-Za-z0-9_./+=-]{16,})'
+)
+ENVIRONMENT_REFERENCE = re.compile(
+    r"(?i)^(?:process\.env|import\.meta\.env)\.[A-Za-z_$][A-Za-z0-9_$]*$"
 )
 
 
@@ -61,6 +85,10 @@ def detect_known_secrets(text: str) -> list[Candidate]:
             )
 
     for match in ASSIGNMENT.finditer(text):
+        value = match.group(1)
+        if ENVIRONMENT_REFERENCE.fullmatch(value):
+            continue
+
         candidates.append(
             Candidate(
                 rule_id="generic-secret-assignment",
@@ -68,7 +96,7 @@ def detect_known_secrets(text: str) -> list[Candidate]:
                 severity="warning",
                 start=match.start(1),
                 end=match.end(1),
-                value=match.group(1),
+                value=value,
             )
         )
 

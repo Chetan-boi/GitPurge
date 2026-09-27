@@ -1,0 +1,83 @@
+{
+  "name": "gitpurge-vscode",
+  "displayName": "GitPurge",
+  "description": "Find likely secrets in the active file or workspace.",
+  "version": "0.1.0",
+  "publisher": "gitpurge",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "gitpurge.findings",
+          "name": "GitPurge"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gitpurge.scanFile",
+        "title": "GitPurge: Scan Active File"
+      },
+      {
+        "command": "gitpurge.scanWorkspace",
+        "title": "GitPurge: Scan Workspace"
+      },
+      {
+        "command": "gitpurge.showFindings",
+        "title": "GitPurge: Show Findings"
+      },
+      {
+        "command": "gitpurge.showOutput",
+        "title": "GitPurge: Show Scan Output"
+      }
+    ],
+    "configuration": {
+      "title": "GitPurge",
+      "properties": {
+        "gitpurge.exclude": {
+          "type": "array",
+          "default": [
+            "**/.git/**",
+            "**/node_modules/**",
+            "**/.venv/**",
+            "**/venv/**",
+            "**/dist/**",
+            "**/build/**"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns excluded from workspace scans."
+        },
+        "gitpurge.maxFileSize": {
+          "type": "number",
+          "default": 1048576,
+          "minimum": 1,
+          "description": "Maximum file size in bytes to scan."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "test": "npm run compile && node --test out/test/scanner.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "ignore": "^7.0.10"
+  }
+}

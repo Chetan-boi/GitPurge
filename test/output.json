@@ -1,16 +1,16 @@
 {
   "findings": [
     {
-      "rule_id": "generic-secret-assignment",
-      "message": "Possible secret assigned to a sensitive variable.",
-      "severity": "warning",
+      "rule_id": "jwt-secret",
+      "message": "JWT secret detected.",
+      "severity": "error",
       "line": 0,
-      "column": 11,
+      "column": 0,
       "end_line": 0,
-      "end_column": 46,
-      "evidence": "SK-12345678901234567890123456789012",
-      "entropy": 3.59
+      "end_column": 49,
+      "evidence": "JWT_SECRET = 'SK-12345678901234567890123456789012",
+      "entropy": null
     }
   ],
-  "scanned_characters": 47
+  "scanned_characters": 50
 }
