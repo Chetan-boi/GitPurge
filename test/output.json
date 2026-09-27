@@ -1,0 +1,16 @@
+{
+  "findings": [
+    {
+      "rule_id": "generic-secret-assignment",
+      "message": "Possible secret assigned to a sensitive variable.",
+      "severity": "warning",
+      "line": 0,
+      "column": 11,
+      "end_line": 0,
+      "end_column": 46,
+      "evidence": "SK-1************9012",
+      "entropy": 3.59
+    }
+  ],
+  "scanned_characters": 47
+}
