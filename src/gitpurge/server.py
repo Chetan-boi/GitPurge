@@ -11,7 +11,6 @@ def handle_request(request: object) -> dict[str, object]:
     # if request.get("method") != "scan":
         # raise ValueError("Only the 'scan' method is supported.")
 
-    # Get the text to scan
     text = request.get("text")
 
     if not isinstance(text, str):
