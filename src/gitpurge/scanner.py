@@ -47,7 +47,7 @@ def _build_findings(
                 column=column,
                 end_line=end_line,
                 end_column=end_column,
-                evidence=_redact(candidate.value),
+                evidence=candidate.value,
                 entropy=candidate.entropy,
             )
         )
@@ -61,9 +61,8 @@ def _line_and_column(text: str, offset: int) -> tuple[int, int]:
     column = offset - (before.rfind("\n") + 1)
     return line, column
 
+# def _redact(value: str) -> str:
+    # if len(value) <= 8:
+        # return "*" * len(value)
 
-def _redact(value: str) -> str:
-    if len(value) <= 8:
-        return "*" * len(value)
-
-    return f"{value[:4]}{'*' * min(12, len(value) - 8)}{value[-4:]}"
+    # return f"{value[:4]}{'*' * min(12, len(value) - 8)}{value[-4:]}"
