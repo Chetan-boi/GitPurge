@@ -1,6 +1,3 @@
 {
-    "path": "/home/user/project/config.py",
-    "content": "API_KEY = 'sk_test_123456789'",
-    "language": "python"
+    "text": "API_KEY = 'sk_test_123456789'",
 }
-
