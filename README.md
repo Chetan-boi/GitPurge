@@ -1,57 +1,41 @@
-# GitPurge
+<img src="assets/icon.png" alt="GitPurge"/>
 
-> VSCode extension for real-time detection of secrets and sensitive information before they get committed to Git.
+### 🛡️ Real-time secret detection for VS Code
 
-GitPurge helps developers detect accidentally committed API keys, tokens, connection strings, private keys, and high-entropy secrets in real-time across individual files or entire workspaces.
+GitPurge helps developers detect and intercept accidentally committed API keys, tokens, and secrets in real-time as you write.
 
----
-
-## ✨ Features
-
-- **Multi-rule Secret Detection**
-  - Detects exposed credentials, API keys, access tokens, connection strings, private keys, and other sensitive values.
-  - Combines rule-based pattern matching with entropy analysis.
-
-- **Shannon Entropy Analysis**
-  - Calculates Shannon entropy to surface high-entropy values that may represent randomly generated secrets.
-  - Uses sensitive context to reduce false positives from ordinary random data.
-
-- **VS Code Extension Integration**
-  - **Real-time Live Scanning**: Scans active documents as you type with debouncing.
-  - **Workspace Scanner**: Full workspace scanning with progress reporting and configurable size/path limits.
-  - **Git-Aware Filtering**: Respects `.gitignore` rules and reports repository tracking status.
-  - **Problems Panel**: Surfaces findings directly in VS Code's standard Problems view.
-
-- **Python Library & CLI**
-  - Reusable Python package with clean models and a CLI for standalone scanning and integration into other tools.
+[![VS Code Marketplace](https://img.shields.io/badge/VS_Code-Marketplace-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
 
 ---
 
-## 🚀 VS Code Extension
+![GitPurge Demo](assets/demo.gif)
 
-### Getting Started
 
-1. Open this repository in VS Code.
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Press `F5` (or run `Launch Extension`) to start the Extension Development Host.
+### ✨ Key Features
 
-### Commands
+- **⚡ Real-Time Secret Detection**: Instantly catches leaked API keys, access tokens, and credentials in the editor before they ever touch git.
+- **🧠 Shannon Entropy & Pattern Matching**: Employs mathematical entropy analysis alongside strict regular expressions to detect high-entropy secrets and minimize false positives.
+- **🔒 100% Local & Private**: Scans execute completely on your machine—no code snippets, file names, or tokens are ever sent to remote servers.
 
-Accessible via `Ctrl+Shift+P` / `Cmd+Shift+P` (Command Palette):
+---
 
-| Command | Identifier | Description |
-| :--- | :--- | :--- |
-| **GitPurge: Scan Active File** | `gitpurge.scanFile` | Scans the currently open file in the editor |
-| **GitPurge: Scan Workspace** | `gitpurge.scanWorkspace` | Scans all readable files in the workspace |
-| **GitPurge: Show Findings** | `gitpurge.showFindings` | Opens a QuickPick listing all recent findings |
-| **GitPurge: Show Scan Output** | `gitpurge.showOutput` | Reveals the GitPurge output channel |
+## ⚡ Quickstart
 
-### Configuration
+### VS Code Extension
 
-Customize scanner behavior in your VS Code settings (`settings.json`):
+Install GitPurge from the **VS Code Extensions Marketplace**, or launch the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and use:
+
+| Command | Action |
+| :--- | :--- |
+| `GitPurge: Scan Active File` | Scans the currently focused file for secrets |
+| `GitPurge: Scan Workspace` | Runs a scan across all non-ignored project files |
+| `GitPurge: Show Findings` | Opens a QuickPick list to jump directly to any detected secret |
+
+#### Configuration
+
+Add exclusions or adjust limits in your VS Code `settings.json`:
 
 ```json
 {
@@ -59,98 +43,77 @@ Customize scanner behavior in your VS Code settings (`settings.json`):
     "**/.git/**",
     "**/node_modules/**",
     "**/.venv/**",
-    "**/venv/**",
-    "**/dist/**",
-    "**/build/**"
+    "**/dist/**"
   ],
   "gitpurge.maxFileSize": 1048576
 }
 ```
 
-- **`gitpurge.exclude`** *(array)*: Glob patterns excluded from workspace scans.
-- **`gitpurge.maxFileSize`** *(number)*: Maximum file size in bytes to scan (default: 1 MiB).
+### Pre-commit Integration
 
----
+Prevent secrets from reaching your Git history automatically by adding GitPurge to `.pre-commit-config.yaml`:
 
-## 🐍 Python Package & CLI
-
-### Installation
-
-Requires Python `>= 3.14`:
-
-```sh
-# Using uv
-uv sync
-
-# Or using pip in a virtual environment
-pip install -e .
-```
-
-### Python API Usage
-
-```python
-from gitpurge.scanner import scan
-
-code_sample = """
-API_KEY = "sk-live_1234567890abcdef1234567890abcdef"
-"""
-
-result = scan(code_sample)
-for finding in result.findings:
-    print(f"[{finding.severity.upper()}] {finding.rule_id} at line {finding.line + 1}: {finding.message}")
-```
-
-### CLI Entrypoint
-
-```sh
-# Execute the server / CLI runner
-python3 -m gitpurge
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: gitpurge
+        name: GitPurge Secret Check
+        entry: python3 -m gitpurge
+        language: system
+        pass_filenames: true
 ```
 
 ---
 
-## 🛠️ Development & Testing
+<details>
+<summary><b>🛠️ Contributor & Development Guide</b></summary>
+<br>
 
-### TypeScript & Extension Tests
+### Development Setup & Testing
 
+#### Extension (TypeScript)
 ```sh
-# Run TypeScript compilation and Node test suite
+# Install dependencies
+npm install
+
+# Run test suite
 npm test
-
-# Watch / Compile TypeScript only
-npm run compile
 ```
 
-### Python Tests & Verification
-
+#### Engine (Python >= 3.14)
 ```sh
-python3 -c "import src.gitpurge as gp; gp.main()"
+# Install dependencies
+uv sync          # or: pip install -e .
+
+# Run test suite
+pytest
 ```
 
----
+### Repository Structure
 
-## 📁 Project Structure
-
-```
+```text
 GitPurge/
 ├── src/
 │   ├── extension.ts       # VS Code extension entry point & TreeDataProvider
 │   ├── gitignore.ts       # .gitignore matching utility
 │   ├── scanner.ts         # TypeScript secret scanner & entropy engine
 │   └── gitpurge/          # Python engine
-│       ├── __init__.py    # Package root
 │       ├── detectors.py   # Regex secret rules & patterns
 │       ├── entropy.py     # Shannon entropy analysis
 │       ├── models.py      # Dataclasses (Finding, ScanResult, GitStatus)
 │       ├── scanner.py     # Python core scanner orchestration
 │       └── server.py      # Request handler and CLI entry point
-├── test/
-│   ├── scanner.test.ts    # Test suite for scanner and .gitignore logic
-│   ├── sample.json        # Test payload
-│   └── output.json        # Expected scanner output
+├── test/                  # Test suites and fixtures
 ├── package.json           # Extension manifest & scripts
 ├── pyproject.toml         # Python project configuration
 └── tsconfig.json          # TypeScript compiler configuration
 ```
 
+</details>
+
 ---
+
+## 🔒 Privacy & Local Execution
+
+GitPurge processes all code 100% locally. No code snippets, file names, tokens, or diagnostics are ever transmitted to external APIs or remote tracking services.
