@@ -1,14 +1,14 @@
 from dataclasses import replace
 
 from .detectors import Candidate, detect_known_secrets
-from .entropy import find_contextual_entropy_candidates
+from .entropy import find_entropy
 from .models import Finding, ScanResult
 
 
 def scan(text: str) -> ScanResult:
     candidates = [
         *detect_known_secrets(text),
-        *find_contextual_entropy_candidates(text),
+        *find_entropy(text),
     ]
 
     return ScanResult(
@@ -61,8 +61,3 @@ def _line_and_column(text: str, offset: int) -> tuple[int, int]:
     column = offset - (before.rfind("\n") + 1)
     return line, column
 
-# def _redact(value: str) -> str:
-    # if len(value) <= 8:
-        # return "*" * len(value)
-
-    # return f"{value[:4]}{'*' * min(12, len(value) - 8)}{value[-4:]}"

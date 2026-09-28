@@ -1,5 +1,4 @@
 from collections import Counter
-from dataclasses import replace
 import math
 import re
 
@@ -28,7 +27,7 @@ def calculate_entropy(text: str) -> float:
     )
 
 
-def find_contextual_entropy_candidates(
+def find_entropy(
     text: str,
     threshold: float = 3.5,
 ) -> list[Candidate]:

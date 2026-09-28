@@ -14,50 +14,72 @@ class Candidate:
 
 
 RULES = (
-    #
     (
-        "aws-access-key-id", # Rule ID
-        "AWS access key ID detected.", # Message
-        "error", # Severity
-        re.compile(r"\b(?:AKIA|ASIA|AIDA|AROA)[A-Z0-9]{16}\b"), # Pattern
+        "slack-token",
+        "Slack token detected.",
+        "error",
+        re.compile(r"\bxox[baprs]-[A-Za-z0-9_-]{10,250}\b"),
     ),
     (
-        "github-token", # Rule ID
-        "GitHub token detected.", # Message
-        "error", # Severity
+        "stripe-api-key",
+        "Stripe secret or restricted API key detected.",
+        "error",
+        re.compile(r"\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{24,99}\b"),
+    ),
+    (
+        "google-api-key",
+        "Google Cloud or Maps API key detected.",
+        "error",
+        re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),
+    ),
+    (
+        "postgres-url",
+        "PostgreSQL connection string with credentials detected.",
+        "error",
         re.compile(
-            r"\bgh[pousr]_[A-Za-z0-9]{36,255}\b"
-            r"|\bgithub_pat_[A-Za-z0-9_]{20,255}\b"
-        ), # Pattern
+            r"\bpostgres(?:ql)?://[^:/\s@]+:[^@/\s]+@[^/\s?#]+(?::\d+)?(?:/[^\s?#]*)?"
+        ),
     ),
     (
-        "private-key", # Rule ID
-        "Private key material detected.", # Message
-        "error", # Severity
-        re.compile(r"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----"), # Pattern
-    ),
-    (
-        "jwt-secret", # Rule ID
-        "JWT secret detected.", # Message
-        "error", # Severity
-        re.compile(r"\bJWT_SECRET\b\s*[:=]\s*[\'\"]?([A-Za-z0-9_./+=-]{16,})"), # Pattern
-    ),
-    (
-        "generic-secret", # Rule ID
-        "Generic secret detected.", # Message
-        "warning", # Severity
-        re.compile(r"\b(?:API_KEY|SECRET|TOKEN)\b\s*[:=]\s*[\'\"]?([A-Za-z0-9_./+=-]{16,})"), # Pattern
-    ),
-    (
-        "mongoose-url", # Rule ID
-        "MongoDB URI detected.", # Message
-        "error", # Severity
+        "mysql-url",
+        "MySQL connection string with credentials detected.",
+        "error",
         re.compile(
-            r"\bmongodb(?:\+srv)?://[^:/\s@]+:[^@/\s]+@[^/\s?#]+"
-            r"(?:/[^\s?#]*)?(?:\?[^\s#]*)?"
-        ), # Pattern
-    )
+            r"\bmysql://[^:/\s@]+:[^@/\s]+@[^/\s?#]+(?::\d+)?(?:/[^\s?#]*)?"
+        ),
+    ),
+    (
+        "openai-api-key",
+        "OpenAI API key detected.",
+        "error",
+        re.compile(r"\bsk-(?:proj-|admin-)?[A-Za-z0-9_-]{32,120}\b"),
+    ),
+    (
+        "anthropic-api-key",
+        "Anthropic API key detected.",
+        "error",
+        re.compile(r"\bsk-ant-api\d{2}-[A-Za-z0-9_-]{80,120}\b"),
+    ),
+    (
+        "sendgrid-api-key",
+        "SendGrid API key detected.",
+        "error",
+        re.compile(r"\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}\b"),
+    ),
+    (
+        "discord-bot-token",
+        "Discord bot token detected.",
+        "error",
+        re.compile(r"\b[MN][A-Za-z\d]{23,26}\.[A-Za-z\d_-]{6}\.[A-Za-z\d_-]{27,38}\b"),
+    ),
+    (
+        "aws-secret-access-key",
+        "AWS secret access key detected.",
+        "warning",
+        re.compile(r"(?i)\baws_secret_access_key\s*[:=]\s*[\'\"]?([A-Za-z0-9/+=]{40})[\'\"]?"),
+    ),
 )
+
 
 ASSIGNMENT = re.compile(
     r'(?im)\b(?:api[_-]?(?:key|token)|secret|token|password|passwd)\b'

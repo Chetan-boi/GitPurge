@@ -22,16 +22,16 @@ def handle_request(request: object) -> dict[str, object]:
 
 
 def main() -> None:
-    # Read each line from test/sample.json
     try:
-        input = open("test/sample.json", "r")
-        request = json.load(input)
+        with open("test/sample.json", "r", encoding="utf-8") as in_file:
+            request = json.load(in_file)
+
         response = handle_request(request)
         print(json.dumps(response))
-        input.close()
 
-        with open("test/output.json", "w") as output:
-            json.dump(response, output, indent=2)
+        with open("test/output.json", "w", encoding="utf-8") as out_file:
+            json.dump(response, out_file, indent=2)
 
     except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError) as error:
         print(f"gitpurge: {error}")
+

@@ -1,70 +1,60 @@
-# =========================
-# Node / TypeScript
-# =========================
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                  ENVIRONMENT & SECRETS               ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+.env
+.env.*
+!.env.example
+
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                  NODE / JAVASCRIPT / TS             ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 node_modules/
+dist/
+out/
+build/
+*.tsbuildinfo
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build output
-dist/
-out/
-build/
-
-# TypeScript
-*.tsbuildinfo
-
-# =========================
-# Python
-# =========================
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                       PYTHON                        ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+# Bytecode & Caches
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# Python tooling
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
 
-# =========================
-# VS Code extension
-# =========================
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                  EDITORS & IDE ARTIFACTS            ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+.idea/
 .vscode-test/
-
-# =========================
-# OS junk
-# =========================
-.DS_Store
-Thumbs.db
-
-# =========================
-# Environment / Secrets
-# =========================
-.env
-.env.*
-!.env.example
-
-# =========================
-# Logs
-# =========================
-*.log
-
-# =========================
-# Temporary files
-# =========================
-*.tmp
-*.temp
+*.sln
+*.suo
+*.ntvs*
+*.njsproj
 *.swp
 *.swo
 
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                  SYSTEM & BUILD JUNK                ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
 
-.idea/

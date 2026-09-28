@@ -1,7 +1,7 @@
 [project]
 name = "gitpurge"
 version = "0.1.0"
-description = "Add your description here"
+description = "VSCode extension for real-time detection of secrets and sensitive information before they get committed to Git."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
