@@ -1,4 +1,4 @@
-<img src="assets/icon.png" alt="GitPurge"/>
+<img src="assets/logo.png" alt="GitPurge"/>
 
 ### 🛡️ Real-time secret detection for VS Code
 

@@ -1,28 +1,14 @@
 {
   "name": "gitpurge-vscode",
-  "displayName": "GitPurge",
-  "description": "Find likely secrets in the active file or workspace.",
-  "version": "0.1.0",
-  "publisher": "gitpurge",
-  "engines": {
-    "vscode": "^1.85.0"
-  },
-  "categories": [
-    "Other"
-  ],
+  "displayName": "GitPurge: Real-Time Secret leak prevention",
+  "description": "Scan and purge secrets, API keys, and sensitive tokens.",
+  "version": "0.0.1",
+  "publisher": "Chetan-boi",
+  "main": "./out/src/extension.js",
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/src/extension.js",
   "contributes": {
-    "views": {
-      "explorer": [
-        {
-          "id": "gitpurge.findings",
-          "name": "GitPurge"
-        }
-      ]
-    },
     "commands": [
       {
         "command": "gitpurge.scanFile",
@@ -38,46 +24,77 @@
       },
       {
         "command": "gitpurge.showOutput",
-        "title": "GitPurge: Show Scan Output"
+        "title": "GitPurge: Show Output"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitpurge-explorer",
+          "title": "GitPurge",
+          "icon": "assets/logo.png"
+        }
+      ]
+    },
+    "views": {
+      "gitpurge-explorer": [
+        {
+          "id": "gitpurge.findings",
+          "name": "Findings"
+        }
+      ]
+    },
     "configuration": {
       "title": "GitPurge",
       "properties": {
         "gitpurge.exclude": {
           "type": "array",
-          "default": [
-            "**/.git/**",
-            "**/node_modules/**",
-            "**/.venv/**",
-            "**/venv/**",
-            "**/dist/**",
-            "**/build/**"
-          ],
           "items": {
             "type": "string"
           },
-          "description": "Glob patterns excluded from workspace scans."
+          "default": [],
+          "description": "Glob patterns to exclude from workspace scans."
         },
         "gitpurge.maxFileSize": {
           "type": "number",
           "default": 1048576,
-          "minimum": 1,
           "description": "Maximum file size in bytes to scan."
         }
       }
     }
   },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chetan-boi/GitPurge"
+  },
+  "icon": "assets/logo.png",
+  "license": "Apache-2.0",
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "secrets",
+    "security",
+    "api-keys",
+    "git",
+    "tokens"
+  ],
   "scripts": {
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p .",
     "test": "npm run compile && node --test out/test/scanner.test.js"
   },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/vscode": "^1.85.0",
-    "typescript": "^5.7.2"
-  },
   "dependencies": {
     "ignore": "^7.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.7.2"
   }
 }
+

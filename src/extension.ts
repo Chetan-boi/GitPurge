@@ -1,3 +1,15 @@
+/*
+ * Copyright 2026 Chetan Sharma
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * ...
+ */
+
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";

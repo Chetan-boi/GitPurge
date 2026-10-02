@@ -1,0 +1,12 @@
+.vscode/**
+.idea/**
+.venv/**
+.python-version
+src/**
+test/**
+tsconfig.json
+**/*.map
+pyproject.toml
+uv.lock
+assets/demo.gif
+assets/demo.mp4
