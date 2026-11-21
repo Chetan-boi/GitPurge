@@ -2,7 +2,7 @@
   "name": "gitpurge-vscode",
   "displayName": "GitPurge: Real-Time Secret leak prevention",
   "description": "Scan and purge secrets, API keys, and sensitive tokens.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "Chetan-boi",
   "main": "./out/src/extension.js",
   "activationEvents": [
@@ -97,4 +97,3 @@
     "typescript": "^5.7.2"
   }
 }
-
