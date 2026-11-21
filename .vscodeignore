@@ -14,3 +14,7 @@ assets/banner.png
 assets/logo.svg
 .pre-commit-hooks.yaml
 assets/banner-dark.png
+.pytest_cache/**
+.ruff_cache/**
+out/test/**
+.gitignore
