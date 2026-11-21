@@ -10,7 +10,7 @@ TOKEN = re.compile(
 )
 
 SECRET_CONTEXT = re.compile(
-    r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|credential|auth)\b"
+    r"(?i)(?<![A-Za-z0-9])(api[_-]?(?:key|token)|secret|token|password|credential|auth)(?![A-Za-z0-9])"
 )
 
 

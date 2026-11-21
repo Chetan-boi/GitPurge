@@ -91,3 +91,42 @@ test("reports zero-based positions over multiple lines", () => {
   assert.equal(finding.end_line, 1);
   assert.equal(finding.end_column, 35);
 });
+// Fixtures are assembled at runtime so this file never contains a literal
+// that secret scanners would flag.
+const providerSamples: Array<[string, string]> = [
+  ["slack-token", "xoxb-" + "1234567890-" + "abcdefghij"],
+  ["stripe-api-key", "sk_" + "live_" + "a".repeat(24)],
+  ["google-api-key", "AIza" + "A".repeat(35)],
+  ["postgres-url", "postgres://admin:hunter2@db.example.com:5432/app"],
+  ["mysql-url", "mysql://root:hunter2@db.example.com/app"],
+  ["openai-api-key", "sk-" + "A1b2C3d4".repeat(5)],
+  ["anthropic-api-key", "sk-ant-api03-" + "A1b2C3d4".repeat(10)],
+  ["sendgrid-api-key", "SG." + "a".repeat(22) + "." + "b".repeat(43)],
+  ["discord-bot-token", "M" + "a".repeat(23) + "." + "b".repeat(6) + "." + "c".repeat(27)],
+];
+
+for (const [ruleId, secret] of providerSamples) {
+  test(`detects ${ruleId}`, () => {
+    const result = scan(`value = ${secret}\n`);
+    const finding = result.findings.find((item) => item.rule_id === ruleId);
+
+    assert.ok(finding, `expected ${ruleId} to be reported`);
+    assert.equal(finding.severity, "error");
+    assert.equal(finding.evidence, secret);
+  });
+}
+
+test("reports AWS secret access key assignments as warnings", () => {
+  const finding = scan(`aws_secret_access_key = "${"A".repeat(40)}"`).findings.find(
+    (item) => item.rule_id === "aws-secret-access-key",
+  );
+
+  assert.ok(finding);
+  assert.equal(finding.severity, "warning");
+});
+
+test("labels Anthropic keys as Anthropic rather than OpenAI", () => {
+  const key = "sk-ant-api03-" + "A1b2C3d4".repeat(10);
+
+  assert.deepEqual(scan(`value = ${key}`).findings.map((item) => item.rule_id), ["anthropic-api-key"]);
+});

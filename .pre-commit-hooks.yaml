@@ -1,0 +1,6 @@
+- id: gitpurge
+  name: GitPurge secret scan
+  description: Block commits that contain API keys, tokens, or other secrets.
+  entry: gitpurge
+  language: python
+  types: [text]

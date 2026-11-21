@@ -22,16 +22,13 @@ def handle_request(request: object) -> dict[str, object]:
 
 
 def main() -> None:
+    """Read one JSON scan request from stdin and print the JSON response."""
+    import sys
+
     try:
-        with open("test/sample.json", "r", encoding="utf-8") as in_file:
-            request = json.load(in_file)
+        response = handle_request(json.load(sys.stdin))
+    except (json.JSONDecodeError, ValueError) as error:
+        print(f"gitpurge: {error}", file=sys.stderr)
+        raise SystemExit(2) from error
 
-        response = handle_request(request)
-        print(json.dumps(response))
-
-        with open("test/output.json", "w", encoding="utf-8") as out_file:
-            json.dump(response, out_file, indent=2)
-
-    except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError) as error:
-        print(f"gitpurge: {error}")
-
+    print(json.dumps(response))

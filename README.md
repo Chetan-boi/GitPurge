@@ -1,119 +1,109 @@
-<img src="assets/logo.png" alt="GitPurge"/>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
+    <img src="assets/banner.png" alt="GitPurge: real-time secret detection for VS Code" width="720">
+  </picture>
+</p>
 
-### 🛡️ Real-time secret detection for VS Code
+GitPurge is a VS Code extension that flags API keys, tokens, and credentials while you type, before they end up in a commit.
 
-GitPurge helps developers detect and intercept accidentally committed API keys, tokens, and secrets in real-time as you write.
+[![VS Code Marketplace](https://img.shields.io/badge/VS_Code-Marketplace-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=Chetan-boi.gitpurge-vscode)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 
-[![VS Code Marketplace](https://img.shields.io/badge/VS_Code-Marketplace-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
-[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
+![GitPurge flagging a hardcoded API key](assets/demo.gif)
 
----
+## What it does
 
-![GitPurge Demo](assets/demo.gif)
+GitPurge scans the file you are editing and reports suspected secrets as editor diagnostics. Findings also appear in a dedicated GitPurge view in the activity bar, where you can jump to each one.
 
+Detection combines two approaches:
 
-### ✨ Key Features
+- **Known patterns.** AWS keys, GitHub, Slack, Stripe, Google, OpenAI, Anthropic, SendGrid and Discord tokens, private key headers, and PostgreSQL, MySQL and MongoDB connection strings with credentials.
+- **Assignments.** Long values assigned to names like `api_key`, `secret`, `token`, or `password` (including prefixed names such as `client_secret`). References like `process.env.X` are ignored.
+- **Entropy.** Long random-looking strings on lines that mention a secret-like name are scored with Shannon entropy.
 
-- **⚡ Real-Time Secret Detection**: Instantly catches leaked API keys, access tokens, and credentials in the editor before they ever touch git.
-- **🧠 Shannon Entropy & Pattern Matching**: Employs mathematical entropy analysis alongside strict regular expressions to detect high-entropy secrets and minimize false positives.
-- **🔒 100% Local & Private**: Scans execute completely on your machine—no code snippets, file names, or tokens are ever sent to remote servers.
+Workspace scans use `git ls-files`, so ignored files are skipped.
 
----
+Everything runs locally. Nothing in your code is sent anywhere.
 
-## ⚡ Quickstart
+## Install
 
-### VS Code Extension
+Search for "GitPurge" in the Extensions view, or install it from the [Marketplace page](https://marketplace.visualstudio.com/items?itemName=Chetan-boi.gitpurge-vscode). VS Code 1.90 or later is required.
 
-Install GitPurge from the **VS Code Extensions Marketplace**, or launch the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and use:
+## Usage
 
-| Command | Action |
+Open the command palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and run:
+
+| Command | Description |
 | :--- | :--- |
-| `GitPurge: Scan Active File` | Scans the currently focused file for secrets |
-| `GitPurge: Scan Workspace` | Runs a scan across all non-ignored project files |
-| `GitPurge: Show Findings` | Opens a QuickPick list to jump directly to any detected secret |
+| `GitPurge: Scan Active File` | Scan the file in the active editor |
+| `GitPurge: Scan Workspace` | Scan every tracked file in the workspace |
+| `GitPurge: Show Findings` | Pick a finding from a list and jump to it |
+| `GitPurge: Show Output` | Open the extension's log |
 
-#### Configuration
+The active file is also rescanned automatically as you edit.
 
-Add exclusions or adjust limits in your VS Code `settings.json`:
+## Settings
+
+| Setting | Default | Description |
+| :--- | :--- | :--- |
+| `gitpurge.exclude` | `[]` | Glob patterns to skip during workspace scans |
+| `gitpurge.maxFileSize` | `1048576` | Largest file size, in bytes, that will be scanned |
 
 ```json
 {
-  "gitpurge.exclude": [
-    "**/.git/**",
-    "**/node_modules/**",
-    "**/.venv/**",
-    "**/dist/**"
-  ],
+  "gitpurge.exclude": ["**/node_modules/**", "**/dist/**"],
   "gitpurge.maxFileSize": 1048576
 }
 ```
 
-### Pre-commit Integration
+## Command line and pre-commit
 
-Prevent secrets from reaching your Git history automatically by adding GitPurge to `.pre-commit-config.yaml`:
+The same project ships a Python CLI for terminals, CI, and git hooks. It needs Python 3.10 or later and has no dependencies.
+
+```sh
+pip install .                      # from a clone of this repository
+gitpurge src/                      # scan files or directories
+gitpurge --staged                  # scan what is about to be committed
+cat config.env | gitpurge -        # scan stdin
+gitpurge --format json --fail-on error app.py
+```
+
+Findings are printed as `path:line:column: severity [rule] message`, with the secret itself partly masked. The exit status is `0` when clean, `1` when something was found at or above `--fail-on` (default `warning`), and `2` for usage or git errors.
+
+To block commits, add this to `.pre-commit-config.yaml`:
 
 ```yaml
 repos:
-  - repo: local
+  - repo: https://github.com/chetan-boi/GitPurge
+    rev: main   # pin to a tag or commit once you have one
     hooks:
       - id: gitpurge
-        name: GitPurge Secret Check
-        entry: python3 -m gitpurge
-        language: system
-        pass_filenames: true
 ```
 
----
+The CLI recognises more provider formats than the extension currently does: Slack, Stripe, Google, OpenAI, Anthropic, SendGrid, Discord, PostgreSQL, MySQL, and AWS secret keys, on top of the extension's own checks.
 
-<details>
-<summary><b>🛠️ Contributor & Development Guide</b></summary>
-<br>
+## Limitations
 
-### Development Setup & Testing
+GitPurge is a heuristic scanner. It will miss some secrets and occasionally flag harmless strings. If a real secret has been committed, rotate it. Removing it from the working tree does not remove it from history.
 
-#### Extension (TypeScript)
+## Development
+
 ```sh
-# Install dependencies
 npm install
-
-# Run test suite
-npm test
+npm test                      # TypeScript scanner tests (extension)
+uv run --group dev pytest     # Python engine and CLI tests
 ```
-
-#### Engine (Python >= 3.14)
-```sh
-# Install dependencies
-uv sync          # or: pip install -e .
-
-# Run test suite
-pytest
-```
-
-### Repository Structure
 
 ```text
-GitPurge/
-├── src/
-│   ├── extension.ts       # VS Code extension entry point & TreeDataProvider
-│   ├── gitignore.ts       # .gitignore matching utility
-│   ├── scanner.ts         # TypeScript secret scanner & entropy engine
-│   └── gitpurge/          # Python engine
-│       ├── detectors.py   # Regex secret rules & patterns
-│       ├── entropy.py     # Shannon entropy analysis
-│       ├── models.py      # Dataclasses (Finding, ScanResult, GitStatus)
-│       ├── scanner.py     # Python core scanner orchestration
-│       └── server.py      # Request handler and CLI entry point
-├── test/                  # Test suites and fixtures
-├── package.json           # Extension manifest & scripts
-├── pyproject.toml         # Python project configuration
-└── tsconfig.json          # TypeScript compiler configuration
+src/
+  extension.ts    VS Code entry point, diagnostics, findings view
+  scanner.ts      scanner used by the extension
+  gitignore.ts    .gitignore matching
+  gitpurge/       Python engine and CLI (detectors, entropy, cli)
+test/             TypeScript and Python tests
 ```
 
-</details>
+## License
 
----
-
-## 🔒 Privacy & Local Execution
-
-GitPurge processes all code 100% locally. No code snippets, file names, tokens, or diagnostics are ever transmitted to external APIs or remote tracking services.
+Apache 2.0. See [LICENSE](LICENSE).

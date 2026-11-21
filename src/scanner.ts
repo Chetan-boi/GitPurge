@@ -31,6 +31,7 @@ const rules: Array<{
   ruleId: string;
   message: string;
   pattern: RegExp;
+  severity?: Finding["severity"];
 }> = [
   {
     ruleId: "aws-access-key-id",
@@ -51,6 +52,57 @@ const rules: Array<{
     ruleId: "mongoose-url",
     message: "MongoDB URI detected.",
     pattern: /\bmongodb(?:\+srv)?:\/\/[^:/\s@]+:[^@/\s]+@[^/\s?#]+(?:\/[^\s?#]*)?(?:\?[^\s#]*)?/g,
+  },
+  {
+    ruleId: "slack-token",
+    message: "Slack token detected.",
+    pattern: /\bxox[baprs]-[A-Za-z0-9_-]{10,250}\b/g,
+  },
+  {
+    ruleId: "stripe-api-key",
+    message: "Stripe secret or restricted API key detected.",
+    pattern: /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{24,99}\b/g,
+  },
+  {
+    ruleId: "google-api-key",
+    message: "Google Cloud or Maps API key detected.",
+    pattern: /\bAIza[0-9A-Za-z_-]{35}\b/g,
+  },
+  {
+    ruleId: "postgres-url",
+    message: "PostgreSQL connection string with credentials detected.",
+    pattern: /\bpostgres(?:ql)?:\/\/[^:/\s@]+:[^@/\s]+@[^/\s?#]+(?::\d+)?(?:\/[^\s?#]*)?/g,
+  },
+  {
+    ruleId: "mysql-url",
+    message: "MySQL connection string with credentials detected.",
+    pattern: /\bmysql:\/\/[^:/\s@]+:[^@/\s]+@[^/\s?#]+(?::\d+)?(?:\/[^\s?#]*)?/g,
+  },
+  {
+    ruleId: "anthropic-api-key",
+    message: "Anthropic API key detected.",
+    pattern: /\bsk-ant-api\d{2}-[A-Za-z0-9_-]{80,120}\b/g,
+  },
+  {
+    ruleId: "openai-api-key",
+    message: "OpenAI API key detected.",
+    pattern: /\bsk-(?:proj-|admin-)?[A-Za-z0-9_-]{32,120}\b/g,
+  },
+  {
+    ruleId: "sendgrid-api-key",
+    message: "SendGrid API key detected.",
+    pattern: /\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}\b/g,
+  },
+  {
+    ruleId: "discord-bot-token",
+    message: "Discord bot token detected.",
+    pattern: /\b[MN][A-Za-z\d]{23,26}\.[A-Za-z\d_-]{6}\.[A-Za-z\d_-]{27,38}\b/g,
+  },
+  {
+    ruleId: "aws-secret-access-key",
+    message: "AWS secret access key detected.",
+    pattern: /\baws_secret_access_key\s*[:=]\s*['"]?[A-Za-z0-9/+=]{40}['"]?/gi,
+    severity: "warning",
   },
 ];
 
@@ -85,7 +137,7 @@ export function scan(text: string): ScanResult {
       candidates.push({
         ruleId: rule.ruleId,
         message: rule.message,
-        severity: "error",
+        severity: rule.severity ?? "error",
         start,
         end: start + value.length,
         value,

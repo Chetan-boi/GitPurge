@@ -49,16 +49,16 @@ RULES = (
         ),
     ),
     (
-        "openai-api-key",
-        "OpenAI API key detected.",
-        "error",
-        re.compile(r"\bsk-(?:proj-|admin-)?[A-Za-z0-9_-]{32,120}\b"),
-    ),
-    (
         "anthropic-api-key",
         "Anthropic API key detected.",
         "error",
         re.compile(r"\bsk-ant-api\d{2}-[A-Za-z0-9_-]{80,120}\b"),
+    ),
+    (
+        "openai-api-key",
+        "OpenAI API key detected.",
+        "error",
+        re.compile(r"\bsk-(?:proj-|admin-)?[A-Za-z0-9_-]{32,120}\b"),
     ),
     (
         "sendgrid-api-key",
@@ -82,7 +82,7 @@ RULES = (
 
 
 ASSIGNMENT = re.compile(
-    r'(?im)\b(?:api[_-]?(?:key|token)|secret|token|password|passwd)\b'
+    r'(?im)(?<![A-Za-z0-9])(?:api[_-]?(?:key|token)|secret|token|password|passwd)(?![A-Za-z0-9])'
     r'\s*[:=]\s*[\'"]?([A-Za-z0-9_./+=-]{16,})'
 )
 ENVIRONMENT_REFERENCE = re.compile(
